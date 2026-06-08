@@ -24,13 +24,9 @@ int main()
 {
     Scheduler s;
     init_scheduler(&s);
-    Context ctxs[2] = {0, 0};
-    init_context(&ctxs[0], do_one);
-    init_context(&ctxs[1], do_two);
-    for(int i = 0; i < 2; i++)
-    {
-        resume(&ctxs[i]);
-    }
+    add_coroutine(&s, do_one);
+    add_coroutine(&s, do_two);
+    run_scheduler(&s);
     return 0;
 }
 

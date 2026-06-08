@@ -26,13 +26,15 @@ struct Scheduler
     void* rip;
 };
 
+void init_scheduler(Scheduler* s);
+
+extern void run_scheduler(Scheduler* s);
+
+extern void add_coroutine(Scheduler* s, coroutine crt);
+
 extern void resume(Context* ctx);
 
 extern void yield(Context* ctx);
-
-extern void init_context(Context* ctx, coroutine crt);
-
-void init_scheduler(Scheduler* s);
 
 #endif
 
