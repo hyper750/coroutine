@@ -21,8 +21,6 @@ struct Scheduler
 {
     Context ctx[MAX_COROUTINES];
     size_t n_ctx;
-    void* rbp;
-    void* rsp;
     void* rip;
 };
 

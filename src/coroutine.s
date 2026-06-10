@@ -2,12 +2,10 @@
 .global init_scheduler
 init_scheduler:
     # Scheduler*
-    # n_ctxs, rbp, rsp, and rip
+    # n_ctxs and rip
     movq $0, (0xA*0x20)(%rdi) 
-    movq $0, (0xA*0x20+0x8)(%rdi)
-    movq $0, (0xA*0x20+0x10)(%rdi)
     # Store return address
-    mov %rsp, (0xA*0x20+0x18)(%rdi)
+    mov %rsp, (0xA*0x20+0x8)(%rdi)
     ret
 
 .global run_scheduler
