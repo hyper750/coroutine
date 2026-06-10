@@ -11,7 +11,7 @@ C_OBJS=$(subst $(SRC_DIR), $(BUILD_C), $(C_SRC:.c=.o))
 ASM_OBJS=$(subst $(SRC_DIR), $(BUILD_ASM), $(ASM_SRC:.s=.o))
 
 .PHONY: all
-all: clean $(EXECUTABLE)
+all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(C_OBJS) $(ASM_OBJS)
 	$(COMPILER) $^ -o $@

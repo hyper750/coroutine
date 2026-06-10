@@ -2,12 +2,12 @@
 .global init_scheduler
 init_scheduler:
     # Scheduler*
-    movq $0, 10*20(%rdi) 
-    movq $0, (10*20+8)(%rdi)
-    movq $0, (10*20+16)(%rdi)
-    # TODO: RSP contains the return address
-    # TODO: 10 from MAX_COROUTINES definition
-    mov %rsp, (10*20+24)(%rdi)
+    # n_ctxs, rbp, rsp, and rip
+    movq $0, (0xA*0x20)(%rdi) 
+    movq $0, (0xA*0x20+0x8)(%rdi)
+    movq $0, (0xA*0x20+0x10)(%rdi)
+    # Store return address
+    mov %rsp, (0xA*0x20+0x18)(%rdi)
     ret
 
 .global run_scheduler
