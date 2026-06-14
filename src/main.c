@@ -24,8 +24,15 @@ int main()
 {
     Scheduler s;
     init_scheduler(&s);
-    add_coroutine(&s, do_one);
-    add_coroutine(&s, do_two);
+    Context* a = add_coroutine(&s, do_one);
+    Context* b = add_coroutine(&s, do_two);
+    printf("Scheduler %p\n", &s);
+    printf("Do one: %p\n", do_one);
+    printf("Do two: %p\n", do_two);
+    printf("A->scheduler: %p\n", a->scheduler);
+    printf("A->do_one: %p\n", a->rip);
+    printf("B->scheduler: %p\n", b->scheduler);
+    printf("B->rip: %p\n", b->rip);
     run_scheduler(&s);
     return 0;
 }

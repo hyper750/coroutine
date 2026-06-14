@@ -12,8 +12,6 @@ typedef void(*coroutine)(Context* ctx);
 struct Context
 {
     Scheduler* scheduler;
-    void* rbp;
-    void* rsp;
     void* rip;
 };
 
@@ -28,7 +26,7 @@ void init_scheduler(Scheduler* s);
 
 extern void run_scheduler(Scheduler* s);
 
-extern void add_coroutine(Scheduler* s, coroutine crt);
+extern Context* add_coroutine(Scheduler* s, coroutine crt);
 
 extern void resume(Context* ctx);
 
