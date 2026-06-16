@@ -1,8 +1,7 @@
 #ifndef COROUTINE_H
 #define COROUTINE_H
 
-#define MAX_COROUTINES 10
-
+#include "constants.h"
 #include <stddef.h>
 
 typedef struct Scheduler Scheduler;
@@ -11,15 +10,17 @@ typedef void(*coroutine)(Context* ctx);
 
 struct Context
 {
+    char stack[STACK_SIZE];
     Scheduler* scheduler;
     void* rip;
+    void* rsp;
+    void* rbp;
 };
 
 struct Scheduler
 {
     Context ctx[MAX_COROUTINES];
     size_t n_ctx;
-    void* rip;
 };
 
 void init_scheduler(Scheduler* s);
@@ -28,7 +29,7 @@ extern void run_scheduler(Scheduler* s);
 
 extern Context* add_coroutine(Scheduler* s, coroutine crt);
 
-extern void resume(Context* ctx);
+extern void start_coroutine(Context* context);
 
 extern void yield(Context* ctx);
 

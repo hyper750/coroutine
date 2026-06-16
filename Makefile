@@ -6,9 +6,9 @@ COMPILER=gcc
 COMPILER_OPTS=-I include
 EXECUTABLE=$(BUILD_DIR)/main
 C_SRC=$(wildcard $(SRC_DIR)/*.c)
-ASM_SRC=$(wildcard $(SRC_DIR)/*.s)
+ASM_SRC=$(wildcard $(SRC_DIR)/*.S)
 C_OBJS=$(subst $(SRC_DIR), $(BUILD_C), $(C_SRC:.c=.o))
-ASM_OBJS=$(subst $(SRC_DIR), $(BUILD_ASM), $(ASM_SRC:.s=.o))
+ASM_OBJS=$(subst $(SRC_DIR), $(BUILD_ASM), $(ASM_SRC:.S=.o))
 
 .PHONY: all
 all: $(EXECUTABLE)
@@ -24,7 +24,7 @@ $(BUILD_C)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(BUILD_C)
 	$(COMPILER) $(COMPILER_OPTS) -c -o $@ $^
 
-$(BUILD_ASM)/%.o: $(SRC_DIR)/%.s
+$(BUILD_ASM)/%.o: $(SRC_DIR)/%.S
 	mkdir -p $(BUILD_ASM)
 	$(COMPILER) $(COMPILER_OPTS) -c -o $@ $^
 

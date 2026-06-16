@@ -1,0 +1,9 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define STACK_SIZE 1024
+#define MAX_COROUTINES 0xA
+#define SIZE_OF_CONTEXT STACK_SIZE + 0X20
+
+#endif
+
