@@ -3,7 +3,7 @@
 
 #define STACK_SIZE 1024
 #define MAX_COROUTINES 0xA
-#define SIZE_OF_CONTEXT STACK_SIZE + 0X20
+#define SIZE_OF_CONTEXT (STACK_SIZE + 0x20)
 
 #endif
 
