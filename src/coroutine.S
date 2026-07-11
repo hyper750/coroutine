@@ -5,6 +5,8 @@
 init_scheduler:
     # Scheduler*
     movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi) 
+    movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
+    movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
     ret
 
 .global run_scheduler
@@ -16,8 +18,12 @@ run_scheduler:
     # Store coroutine index
     sub $0x8, %rsp
     movl $0, (%rsp)
+    # Store Scheduler frame
+    mov %rbp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
+    mov %rsp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
 
-    loop:
+    scheduler_loop:
+    # TODO: Second coroutine it will have 16 bytes more? Where does it come from? start coroutine will fix it?
     mov (%rsp), %rcx
     mov $SIZE_OF_CONTEXT, %rax
     mul %rcx
@@ -30,8 +36,11 @@ run_scheduler:
     xor %rdx, %rdx
     div %rcx
     mov %rdx, (%rsp)
-    # And switch context to the function
-    jmp *0x8(%rsi)
+    # Switch to coroutine frame
+    mov (STACK_SIZE+0x10)(%rsi), %rbp
+    mov (STACK_SIZE+0x18)(%rsi), %rsp
+    # Continue coroutine flow
+    jmp *(STACK_SIZE+0x8)(%rsi)
     
     # Never reached
     mov %rbp, %rsp
@@ -50,10 +59,11 @@ add_coroutine:
     lea (%rdi, %rax), %rax
     mov %rdi, STACK_SIZE(%rax)
     mov %rsi, (STACK_SIZE+0x8)(%rax)
-    # Store rbp and rsp at the beggining of the Context stack
-    lea (%rax), %rcx
-    mov %rcx, (STACK_SIZE+0x10)(%rax) 
-    mov %rax, (STACK_SIZE+0x18)(%rax) 
+    # Store frame
+    mov $STACK_SIZE, %rdx
+    lea (%rax, %rdx), %rdx
+    mov %rdx, (STACK_SIZE+0x10)(%rax) 
+    mov %rdx, (STACK_SIZE+0x18)(%rax) 
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
     ret
@@ -62,21 +72,25 @@ add_coroutine:
 yield:
     # Context*
     # Save current state
-    mov (%rsp), %rsi
-    mov %rsi, (STACK_SIZE+0x8)(%rdi)
     # Remove return address, since it's not used via ret
     pop %rdx
-    # Return Scheduler*
-    mov (%rdi), %rdi
-    # TODO: Move pointer to the original stack pointer
-    jmp loop
+    mov %rdx, (STACK_SIZE+0x8)(%rdi)
+    # Return Scheduler* 
+    mov (STACK_SIZE)(%rdi), %rdi
+    # Move frame to the original one from the scheduler
+    mov (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi), %rbp
+    mov (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi), %rsp
+    jmp scheduler_loop
 
-.global start_coroutine
-start_coroutine:
-    # Context*
-    # Remove frame built, it stores 16 bytes with the Context* and the return address
-    mov %rbp, %rsp
-    pop %rbp
-    # TODO: Point frame to context frame
-    jmp *%rdi
-
+# .global start_coroutine
+# start_coroutine:
+#     # Context*
+#     # Remove frame built from the original function, it stores 16 bytes with the Context* and the return address
+#     mov (%rsp), %rsi
+#     mov %rbp, %rsp
+#     pop %rbp
+#     # Point frame to context frame
+#     mov (STACK_SIZE+0x10)(%rdi), %rbp
+#     mov (STACK_SIZE+0x18)(%rdi), %rsp
+#     jmp *%rsi
+# 

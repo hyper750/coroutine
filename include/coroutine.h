@@ -13,14 +13,16 @@ struct Context
     char stack[STACK_SIZE];
     Scheduler* scheduler;
     void* rip;
-    void* rsp;
     void* rbp;
+    void* rsp;
 };
 
 struct Scheduler
 {
     Context ctx[MAX_COROUTINES];
     size_t n_ctx;
+    void* rbp;
+    void* rsp;
 };
 
 void init_scheduler(Scheduler* s);
@@ -29,7 +31,7 @@ extern void run_scheduler(Scheduler* s);
 
 extern Context* add_coroutine(Scheduler* s, coroutine crt);
 
-extern void start_coroutine(Context* context);
+// extern void start_coroutine(Context* context);
 
 extern void yield(Context* ctx);
 
