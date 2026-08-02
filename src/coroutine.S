@@ -17,7 +17,7 @@ run_scheduler:
     
     # Store coroutine index
     sub $0x8, %rsp
-    movl $0, (%rsp)
+    movq $0, (%rsp)
     # Store Scheduler frame
     mov %rbp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
     mov %rsp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
@@ -40,6 +40,7 @@ run_scheduler:
     mov (STACK_SIZE+0x10)(%rsi), %rbp
     mov (STACK_SIZE+0x18)(%rsi), %rsp
     # Continue coroutine flow
+    mov %rsi, %rdi
     jmp *(STACK_SIZE+0x8)(%rsi)
     
     # Never reached
@@ -62,7 +63,8 @@ add_coroutine:
     # Store frame
     mov $STACK_SIZE, %rdx
     lea (%rax, %rdx), %rdx
-    mov %rdx, (STACK_SIZE+0x10)(%rax) 
+    mov %rdx, (STACK_SIZE+0x10)(%rax)
+    and $-0x10, %rdx  # Align 16 bytes
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
@@ -75,6 +77,8 @@ yield:
     # Remove return address, since it's not used via ret
     pop %rdx
     mov %rdx, (STACK_SIZE+0x8)(%rdi)
+    mov %rbp, (STACK_SIZE+0x10)(%rdi)
+    mov %rsp, (STACK_SIZE+0x18)(%rdi)
     # Return Scheduler* 
     mov (STACK_SIZE)(%rdi), %rdi
     # Move frame to the original one from the scheduler
