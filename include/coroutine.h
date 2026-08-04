@@ -31,8 +31,6 @@ extern void run_scheduler(Scheduler* s);
 
 extern Context* add_coroutine(Scheduler* s, coroutine crt);
 
-// extern void start_coroutine(Context* context);
-
 extern void yield(Context* ctx);
 
 #endif

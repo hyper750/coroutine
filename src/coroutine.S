@@ -88,15 +88,3 @@ yield:
     mov (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi), %rsp
     jmp scheduler_loop
 
-# .global start_coroutine
-# start_coroutine:
-#     # Context*
-#     # Remove frame built from the original function, it stores 16 bytes with the Context* and the return address
-#     mov (%rsp), %rsi
-#     mov %rbp, %rsp
-#     pop %rbp
-#     # Point frame to context frame
-#     mov (STACK_SIZE+0x10)(%rdi), %rbp
-#     mov (STACK_SIZE+0x18)(%rdi), %rsp
-#     jmp *%rsi
-# 
