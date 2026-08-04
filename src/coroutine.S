@@ -24,6 +24,7 @@ run_scheduler:
 
     scheduler_loop:
     # TODO: Second coroutine it will have 16 bytes more? Where does it come from? start coroutine will fix it?
+    # TODO: SIGSEGV $rsp is pointing to the correct memory address but the value is overrided with a pointer _dl_runtime_resolve_xsavec
     mov (%rsp), %rcx
     mov $SIZE_OF_CONTEXT, %rax
     mul %rcx
@@ -32,7 +33,8 @@ run_scheduler:
     inc %rcx
     # Avoid index overflow
     mov %rcx, %rax
-    mov $MAX_COROUTINES, %rcx
+    # Number of contexts from the scheduler
+    mov (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi), %rcx
     xor %rdx, %rdx
     div %rcx
     mov %rdx, (%rsp)
@@ -61,10 +63,10 @@ add_coroutine:
     mov %rdi, STACK_SIZE(%rax)
     mov %rsi, (STACK_SIZE+0x8)(%rax)
     # Store frame
-    mov $STACK_SIZE, %rdx
+    mov $STACK_SIZE-1, %rdx
     lea (%rax, %rdx), %rdx
     mov %rdx, (STACK_SIZE+0x10)(%rax)
-    and $-0x10, %rdx  # Align 16 bytes
+    # and $-0x10, %rdx  # Align 16 bytes
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
