@@ -5,7 +5,7 @@ It uses a fix stack size of 1Kb per coroutine and the schedulers accepts maximum
 
 
 ## Example
-![](docs/example.mp4)
+![](docs/example.gif)
 
 
 ## To improve
