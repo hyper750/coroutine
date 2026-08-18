@@ -1,4 +1,4 @@
-# Coroutine Assembly
+# Coroutine Assembly/C
 
 Project for learning assembly and make fun a bit (or not).
 It uses a fix stack size of 1Kb per coroutine and the schedulers accepts maximum 10 coroutines. It can be modified via constants.h.
