@@ -66,7 +66,7 @@ add_coroutine:
     mov $STACK_SIZE-1, %rdx
     lea (%rax, %rdx), %rdx
     mov %rdx, (STACK_SIZE+0x10)(%rax)
-    # and $-0x10, %rdx  # Align 16 bytes
+    and $-0x10, %rdx  # Align 16 bytes
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)

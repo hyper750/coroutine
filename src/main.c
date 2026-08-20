@@ -3,27 +3,30 @@
 
 void do_one(Context* ctx)
 {
+    int x = 0;
     while(1)
     {
-        printf("Do one\n");
+        printf("Do one %d\n", x++);
         yield(ctx);
     }
 }
 
 void do_two(Context* ctx)
 {
+    int x = 10;
     while(1)
     {
-        printf("do two\n");
+        printf("Do two %d\n", x++);
         yield(ctx);
     }
 }
 
 void do_three(Context* ctx)
 {
+    int x = 20;
     while(1)
     {
-        printf("do three\n");
+        printf("Do three %d\n", x++);
         yield(ctx);
     }
 }
