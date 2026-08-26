@@ -48,6 +48,13 @@ run_scheduler:
     mov (STACK_SIZE+0x20)(%rsi), %rax
     test %rax, %rax
     jnz run_ctx
+    mov 0x8(%rsp), %rdx
+    incq %rdx
+    mov (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi), %rsi
+    xor %rsi, %rdx
+    jz finish_scheduler_loop
+    mov %rdx, 0x8(%rsp)
+    jmp scheduler_loop
 
     run_ctx:
     # Switch to coroutine frame
@@ -114,6 +121,6 @@ yield:
 .global stop
 stop:
     # Context*
-    mov $0, %rsi
+    xor %rsi, %rsi
     mov %rsi, (STACK_SIZE+0x20)(%rdi)
     jmp yield

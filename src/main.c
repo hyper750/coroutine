@@ -7,7 +7,10 @@ void do_one(Context* ctx)
     while(1)
     {
         printf("Do one %d\n", x++);
-        break;
+        if(x % 10 == 0)
+        {
+            stop(ctx);
+        }
         yield(ctx);
     }
     stop(ctx);
@@ -15,26 +18,30 @@ void do_one(Context* ctx)
 
 void do_two(Context* ctx)
 {
-    int x = 10;
+    int x = 100;
     while(1)
     {
         printf("Do two %d\n", x++);
-        break;
+        if(x % 100 == 0)
+        {
+            stop(ctx);
+        }
         yield(ctx);
     }
-    stop(ctx);
 }
 
 void do_three(Context* ctx)
 {
-    int x = 20;
+    int x = 1000;
     while(1)
     {
         printf("Do three %d\n", x++);
-        break;
+        if(x % 1000 == 0)
+        {
+            stop(ctx);
+        }
         yield(ctx);
     }
-    stop(ctx);
 }
 
 int main()
