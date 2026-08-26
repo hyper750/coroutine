@@ -43,7 +43,7 @@ run_scheduler:
     mov (STACK_SIZE+0x18)(%rsi), %rsp
     # Continue coroutine flow
     mov %rsi, %rdi
-    jmp *(STACK_SIZE+0x8)(%rsi)
+    jmp *(STACK_SIZE+0x8)(%rdi)
     
     # Never reached
     mov %rbp, %rsp
@@ -54,9 +54,14 @@ run_scheduler:
 add_coroutine:
     # Scheduler*, function*
     # Return Context*
-    # TODO: Check total number of contexts to avoid overflow and return NULL
     # number of ctx in rax * sizeof context to calculate the context to populate
     mov (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi), %rax
+    mov %rax, %rdx
+    mov $MAX_COROUTINES, %rcx
+    xor %rcx, %rax
+    jz add_coroutine_without_capacity
+
+    mov %rdx, %rax
     mov $SIZE_OF_CONTEXT, %rdx
     mul %rdx
     lea (%rdi, %rax), %rax
@@ -70,6 +75,10 @@ add_coroutine:
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
+    ret
+
+add_coroutine_without_capacity:
+    # 0 or NULL returned
     ret
 
 .global yield
