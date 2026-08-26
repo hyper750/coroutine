@@ -17,7 +17,7 @@ run_scheduler:
     mov %rsp, %rbp
     
     # Store coroutine index
-    sub $0x8, %rsp
+    sub $0x10, %rsp
     xor %rsi, %rsi
     movq %rsi, (%rsp)
     # Store Scheduler frame
@@ -26,6 +26,12 @@ run_scheduler:
 
     scheduler_loop:
     mov (%rsp), %rcx
+    test %rcx, %rcx
+    jnz scheduler_load_context
+    xor %rsi, %rsi
+    mov %rsi, 0x8(%rsp)
+
+    scheduler_load_context:
     mov $SIZE_OF_CONTEXT, %rax
     mul %rcx
     # rsi has the Context*
@@ -38,14 +44,20 @@ run_scheduler:
     xor %rdx, %rdx
     div %rcx
     mov %rdx, (%rsp)
+    # Check if is still running
+    mov (STACK_SIZE+0x20)(%rsi), %rax
+    test %rax, %rax
+    jnz run_ctx
+
+    run_ctx:
     # Switch to coroutine frame
     mov (STACK_SIZE+0x10)(%rsi), %rbp
     mov (STACK_SIZE+0x18)(%rsi), %rsp
     # Continue coroutine flow
     mov %rsi, %rdi
     jmp *(STACK_SIZE+0x8)(%rdi)
-    
-    # Never reached
+   
+    finish_scheduler_loop:
     mov %rbp, %rsp
     pop %rbp
     ret
@@ -73,6 +85,8 @@ add_coroutine:
     mov %rdx, (STACK_SIZE+0x10)(%rax)
     and $-0x10, %rdx  # Align 16 bytes
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
+    mov $1, %rdx
+    mov %rdx, (STACK_SIZE+0x20)(%rax)
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
     ret
@@ -97,3 +111,9 @@ yield:
     mov (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi), %rsp
     jmp scheduler_loop
 
+.global stop
+stop:
+    # Context*
+    mov $0, %rsi
+    mov %rsi, (STACK_SIZE+0x20)(%rdi)
+    jmp yield

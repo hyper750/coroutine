@@ -15,6 +15,7 @@ struct Context
     void* rip;
     void* rbp;
     void* rsp;
+    bool is_running;
 };
 
 struct Scheduler
@@ -32,6 +33,8 @@ extern void run_scheduler(Scheduler* s);
 extern Context* add_coroutine(Scheduler* s, coroutine crt);
 
 extern void yield(Context* ctx);
+
+extern void stop(Context* ctx);
 
 #endif
 

@@ -7,8 +7,10 @@ void do_one(Context* ctx)
     while(1)
     {
         printf("Do one %d\n", x++);
+        break;
         yield(ctx);
     }
+    stop(ctx);
 }
 
 void do_two(Context* ctx)
@@ -17,8 +19,10 @@ void do_two(Context* ctx)
     while(1)
     {
         printf("Do two %d\n", x++);
+        break;
         yield(ctx);
     }
+    stop(ctx);
 }
 
 void do_three(Context* ctx)
@@ -27,8 +31,10 @@ void do_three(Context* ctx)
     while(1)
     {
         printf("Do three %d\n", x++);
+        break;
         yield(ctx);
     }
+    stop(ctx);
 }
 
 int main()
