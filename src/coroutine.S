@@ -4,9 +4,10 @@
 .global init_scheduler
 init_scheduler:
     # Scheduler*
-    movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi) 
-    movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
-    movq $0, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
+    xor %rsi, %rsi
+    movq %rsi, (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
+    movq %rsi, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
+    movq %rsi, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
     ret
 
 .global run_scheduler
@@ -17,14 +18,13 @@ run_scheduler:
     
     # Store coroutine index
     sub $0x8, %rsp
-    movq $0, (%rsp)
+    xor %rsi, %rsi
+    movq %rsi, (%rsp)
     # Store Scheduler frame
     mov %rbp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x8)(%rdi)
     mov %rsp, (MAX_COROUTINES*SIZE_OF_CONTEXT+0x10)(%rdi)
 
     scheduler_loop:
-    # TODO: Second coroutine it will have 16 bytes more? Where does it come from? start coroutine will fix it?
-    # TODO: SIGSEGV $rsp is pointing to the correct memory address but the value is overrided with a pointer _dl_runtime_resolve_xsavec
     mov (%rsp), %rcx
     mov $SIZE_OF_CONTEXT, %rax
     mul %rcx
