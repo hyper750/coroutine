@@ -75,12 +75,10 @@ add_coroutine:
     # Return Context*
     # number of ctx in rax * sizeof context to calculate the context to populate
     mov (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi), %rax
-    mov %rax, %rdx
     mov $MAX_COROUTINES, %rcx
-    xor %rcx, %rax
+    xor %rax, %rcx
     jz add_coroutine_without_capacity
 
-    mov %rdx, %rax
     mov $SIZE_OF_CONTEXT, %rdx
     mul %rdx
     lea (%rdi, %rax), %rax
@@ -100,6 +98,7 @@ add_coroutine:
 
 add_coroutine_without_capacity:
     # 0 or NULL returned
+    xor %rax, %rax
     ret
 
 .global yield
