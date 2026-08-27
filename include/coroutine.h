@@ -26,7 +26,7 @@ struct Scheduler
     void* rsp;
 };
 
-void init_scheduler(Scheduler* s);
+extern void init_scheduler(Scheduler* s);
 
 extern void run_scheduler(Scheduler* s);
 

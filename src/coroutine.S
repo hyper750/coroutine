@@ -45,13 +45,13 @@ run_scheduler:
     div %rcx
     mov %rdx, (%rsp)
     # Check if is still running
-    mov (STACK_SIZE+0x20)(%rsi), %rax
-    test %rax, %rax
+    movb (STACK_SIZE+0x20)(%rsi), %dl
+    test %dl, %dl
     jnz run_ctx
     mov 0x8(%rsp), %rdx
     incq %rdx
     mov (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi), %rsi
-    xor %rsi, %rdx
+    xor %rdx, %rsi
     jz finish_scheduler_loop
     mov %rdx, 0x8(%rsp)
     jmp scheduler_loop
@@ -92,8 +92,8 @@ add_coroutine:
     mov %rdx, (STACK_SIZE+0x10)(%rax)
     and $-0x10, %rdx  # Align 16 bytes
     mov %rdx, (STACK_SIZE+0x18)(%rax) 
-    mov $1, %rdx
-    mov %rdx, (STACK_SIZE+0x20)(%rax)
+    mov $1, %dl
+    movb %dl, (STACK_SIZE+0x20)(%rax)
     # Increment number of ctxs being used
     incq (MAX_COROUTINES*SIZE_OF_CONTEXT)(%rdi)
     ret
@@ -121,6 +121,6 @@ yield:
 .global stop
 stop:
     # Context*
-    xor %rsi, %rsi
-    mov %rsi, (STACK_SIZE+0x20)(%rdi)
+    xor %al, %al
+    movb %al, (STACK_SIZE+0x20)(%rdi)
     jmp yield
