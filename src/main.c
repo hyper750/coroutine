@@ -13,7 +13,6 @@ void do_one(Context* ctx)
         }
         yield(ctx);
     }
-    stop(ctx);
 }
 
 void do_two(Context* ctx)
